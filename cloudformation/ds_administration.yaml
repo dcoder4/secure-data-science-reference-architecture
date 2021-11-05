@@ -23,6 +23,11 @@ Parameters:
       - false
     Description: true indicates a quickstart-style deployment, false indicates a workshop deployment
 
+  BuildArtifactsBucket:
+    Type: String
+    Default: datasciencelab-artifacts
+    Description: Name of S3 Bucket used to store solution artifacts
+
 Conditions: 
   IsAQuickstart: !Equals [ !Ref QuickstartMode, true ]
 
@@ -46,7 +51,7 @@ Resources:
       ProvisioningArtifactParameters:
         - Name: 'DS Environment v1'
           Info:
-            LoadTemplateFromURL: 'https://s3.amazonaws.com/< S3_CFN_STAGING_BUCKET_PATH >/ds_environment.yaml'
+            LoadTemplateFromURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_environment.yaml'
 
   SCPortfolioSageMakerProductAssociation:
     Type: 'AWS::ServiceCatalog::PortfolioProductAssociation'
@@ -76,21 +81,21 @@ Resources:
   CfnPyPlateMacro:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: pyplate_macro.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/pyplate_macro.yaml'
 
   DataSciencePrincipals:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackSetName: !Ref SharedServiceStackSetName
-      TemplateURL: ds_admin_principals.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_admin_principals.yaml'
       
   SharedServiceNetwork:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackSetName: !Ref SharedServiceStackSetName
-      TemplateURL: ds_shared_services_network.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_shared_services_network.yaml'
 
   SharedServicePyPIMirror:
     Type: AWS::CloudFormation::Stack
@@ -98,11 +103,11 @@ Resources:
     Properties:
       Parameters:
         StackSetName: !Ref SharedServiceStackSetName
-      TemplateURL: ds_shared_services_ecs.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_shared_services_ecs.yaml'
 
   SageMakerDetectiveControl:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackSetName: !Ref SharedServiceStackSetName
-      TemplateURL: ds_admin_detective.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_admin_detective.yaml'

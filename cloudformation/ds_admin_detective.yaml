@@ -4,7 +4,12 @@ Description: |
 Parameters:
   StackSetName:
     Type: String 
-    Description: A name to be used across nested stacks 
+    Description: A name to be used across nested stacks
+  
+  BuildArtifactsBucket:
+    Type: String
+    Default: datasciencelab-artifacts
+    Description: Name of S3 Bucket used to store solution artifacts
 
 Resources:
   SageMakerDetectiveControlExecutionRole:
@@ -48,7 +53,7 @@ Resources:
       FunctionName: SageMakerVPCEnforcer
       Description: Detective control to enforce VPC attachment of SageMaker resources
       Runtime: python3.6
-      Code: vpc_detective_control.zip
+      Code: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/vpc_detective_control.zip'
       Handler: inspect_sagemaker_resource.lambda_handler
       MemorySize: 320
       Timeout: 180

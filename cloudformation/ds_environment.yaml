@@ -18,6 +18,11 @@ Parameters:
     Type: String
     Default: dev
 
+  BuildArtifactsBucket:
+    Type: String
+    Default: datasciencelab-artifacts
+    Description: Name of S3 Bucket used to store solution artifacts
+    
   VpcCIDR:
     Type: String
     Default: 10.2.0.0/16
@@ -56,7 +61,7 @@ Resources:
   DSEnvironmentNetwork:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ds_env_network.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_env_network.yaml'
       Parameters:
         NaturalProjectName: !Ref ProjectName
         ProjectName: |
@@ -82,7 +87,7 @@ Resources:
   DSEnvironmentPrincipals:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ds_env_principals.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_env_principals.yaml'
       Parameters:
         NaturalProjectName: !Ref ProjectName
         ProjectName: |
@@ -101,7 +106,7 @@ Resources:
       - DSEnvironmentNetwork
       - DSEnvironmentPrincipals
     Properties:
-      TemplateURL: ds_env_backing_store.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_env_backing_store.yaml'
       Parameters:
         NaturalProjectName: !Ref ProjectName
         ProjectName: |
@@ -118,7 +123,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: DSEnvironmentPrincipals
     Properties:
-      TemplateURL: ds_env_catalog.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_env_catalog.yaml'
       Parameters:
         NaturalProjectName: !Ref ProjectName
         ProjectName: |
@@ -138,7 +143,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: DSEnvironmentBackingStore
     Properties:
-      TemplateURL: ds_env_sagemaker.yaml
+      TemplateURL: !Sub 'https://${BuildArtifactsBucket}.s3.${AWS::Region}.amazonaws.com/ds_env_sagemaker.yaml'
       Parameters:
         NaturalProjectName: !Ref ProjectName
         ProjectName: |
